@@ -45,7 +45,6 @@ public:
 	Fraction(long long num, long long denom);
 	Fraction(double numeric);
 	operator double(){
-		// double res = 
 		return((double)this->numerator / this->denominator);
 	}
 	operator int(){
@@ -80,8 +79,10 @@ public:
 	Fraction operator /= (Fraction);
 	// метод деления дроби на целое число
 	Fraction operator / (int);
+	Fraction operator / (long long);
 	Fraction operator / (double);
 	Fraction operator /= (int);
+	Fraction operator /= (long long);
 	Fraction operator /= (double);
 	// метод умножения на (-1)
 	Fraction operator - ();
@@ -89,18 +90,15 @@ public:
 	// функция сложения целого числа и дроби
 	friend Fraction operator + (int, Fraction);
 	friend Fraction operator + (double, Fraction);
-	friend double operator	+= (double, Fraction);
 	// функция вычитания дроби из целого числа
 	friend Fraction operator - (int, Fraction);
 	friend double operator - (double, Fraction);
 	// функция умножения целого числа и дроби
 	friend Fraction operator * (int, Fraction);
 	friend Fraction operator * (double, Fraction);
-	friend double operator *= (double, Fraction);
 	// функция деления целого числа на дробь
 	friend Fraction operator / (int, Fraction);
 	friend Fraction operator / (double, Fraction);
-	friend double operator /= (double, Fraction);
 	// метод преобразования в тип double
 	// методы сравнения двух дробей
 	bool operator > (Fraction);
@@ -122,19 +120,7 @@ public:
 	friend bool operator <= (int, Fraction);
 	friend bool operator != (int, Fraction);
 	friend bool operator == (int, Fraction);
-	// //функция ввода дроби
-	// friend istream& operator >> (istream&, Fraction&);
-	// //функция вывода дроби
-	// friend ostream& operator << (ostream&, Fraction&);
-	~Fraction();
 };
-
-double	sin(Fraction);
-
-Fraction::~Fraction()
-{
-
-}
 
 Fraction::Fraction()
 {
@@ -198,10 +184,10 @@ Fraction Fraction::operator+(int i){
 	return(sub);
 }
 
-// 1Fraction Fraction::operator+(double d){
-// 	Fraction sub;
-// 	return(sub);
-// }
+Fraction Fraction::operator+(double d){
+	Fraction sub(d);
+	return(*this + sub);
+}
 
 Fraction	operator +(int i, Fraction p)
 {
@@ -211,7 +197,7 @@ Fraction	operator +(int i, Fraction p)
 
 Fraction Fraction::operator+=(Fraction p)
 {
-	Fraction sub(this->numerator * p.numerator + p.numerator * this->denominator,
+	Fraction sub(this->numerator * p.denominator + p.numerator * this->denominator,
 												this->denominator * p.denominator);
 	*this = sub;
 	return(*this);
@@ -225,38 +211,38 @@ Fraction Fraction::operator+=(int i)
 }
 
 
-// 1Fraction Fraction::operator+=(double d)
-// {
-// 	Fraction sub(this->numerator + i * this->denominator,this->denominator);
-// 	sub.Cancellation();
-// 	*this = sub;
-// 	return(*this);
-// }
+Fraction Fraction::operator+=(double d)
+{
+	Fraction sub(d);
+	*this = *this + sub;
+	return(*this);
+}
 
 Fraction Fraction::operator - (Fraction p)
 {
-	Fraction sub(this->numerator * p.numerator - p.numerator * this->denominator,
-													this->numerator * p.denominator);
+	Fraction sub(this->numerator * p.denominator - p.numerator * this->denominator,
+													this->denominator * p.denominator);
 	return(sub);
 }
 Fraction Fraction::operator -= (Fraction p)
 {
-	Fraction sub(this->numerator * p.numerator - p.numerator * this->denominator,
-													this->numerator * p.denominator);
+	Fraction sub(this->numerator * p.denominator - p.numerator * this->denominator,
+													this->denominator * p.denominator);
 	*this = sub;
 	return(*this);
 }
 	// метод вычитания из дроби целого числа
 Fraction Fraction::operator - (int i)
 {
-	Fraction sub(this->numerator - i * this->denominator, this->numerator);
+	Fraction sub(this->numerator - i * this->denominator, this->denominator);
 	return(sub);
 }
 
-// Fraction Fraction::operator - (double d)
-// {
-
-// }
+Fraction Fraction::operator - (double d)
+{
+	Fraction sub(d);
+	return(*this - sub);
+}
 
 Fraction Fraction::operator -= (int i)
 {
@@ -264,10 +250,12 @@ Fraction Fraction::operator -= (int i)
 	*this = sub;
 	return(*this);
 }
-// Fraction Fraction::operator -= (double)
-// {
-//  
-// }
+Fraction Fraction::operator -= (double d)
+{
+	Fraction sub(d);
+	*this = *this - sub;
+	return(*this);
+}
 // метод умножения двух дробей
 Fraction Fraction::operator * (Fraction p)
 {
@@ -287,10 +275,11 @@ Fraction Fraction::operator * (int  i)
 	return(sub);
 }
 
-// Fraction Fraction::operator * (double d)
-// {
-
-// }
+Fraction Fraction::operator * (double d)
+{
+	Fraction sub(d);
+	return(*this + sub);
+}
 
 Fraction Fraction::operator *= (int i)
 {
@@ -299,10 +288,12 @@ Fraction Fraction::operator *= (int i)
 	return(*this);
 }
 
-// Fraction Fraction::operator *= (double d)
-// {
-// 
-// }
+Fraction Fraction::operator *= (double d)
+{
+	Fraction sub(d);
+	*this = *this * sub;
+	return(*this);
+}
 
 // метод деления двух дробей
 Fraction Fraction::operator / (Fraction p)
@@ -337,10 +328,22 @@ Fraction Fraction::operator / (int i)
 	else
 		return(*this);
 }
-// Fraction Fraction::operator / (double d)
-// {
-// 
-// }
+
+Fraction Fraction::operator / (long long i)
+{
+	if (i != 0)
+	{
+		Fraction sub(this->numerator, this->denominator * i);
+		return(sub);
+	}
+	else
+		return(*this);
+}
+Fraction Fraction::operator / (double d)
+{
+	Fraction sub(d);
+	return(*this / sub);
+}
 
 Fraction Fraction::operator /= (int i)
 {
@@ -354,30 +357,42 @@ Fraction Fraction::operator /= (int i)
 		return(*this);
 }
 
-// Fraction operator /= (double d)
-// {
-// }
+Fraction Fraction::operator /= (long long i)
+{
+	if (i != 0)
+	{
+		Fraction sub(this->numerator, this->denominator * i);
+		*this = sub;
+		return(*this);
+	}
+	else
+		return(*this);
+}
+
+Fraction Fraction::operator /= (double d)
+{
+	Fraction sub(d);
+	*this = *this / sub;
+	return(*this);
+}
 
 // // метод умножения на (-1)
 // Fraction operator - ();
 // // дружественные функции
 // // функция сложения целого числа и дроби
 
-// Fraction operator + (double d, Fraction p)
-// {
-// 
-// }
+Fraction operator + (double d, Fraction p)
+{
+	Fraction sub(d);
+	return(sub + p);
+}
 
-// friend double operator	+= (double, Fraction);
-
-// // функция вычитания дроби из целого числа
+// функция вычитания дроби из целого числа
 Fraction operator - (int i, Fraction p)
 {
 	Fraction sub(i * p.denominator - p.numerator, p.denominator);
 	return(sub);
 }
-
-// friend double operator - (double, Fraction);
 
 // // функция умножения целого числа и дроби
 Fraction operator * (int i, Fraction p)
@@ -386,7 +401,11 @@ Fraction operator * (int i, Fraction p)
 	return(sub);
 }
 
-// friend Fraction operator * (double, Fraction);
+Fraction operator * (double d, Fraction p)
+{
+	Fraction sub(d);
+	return(sub * p);
+}
 
 // // функция деления целого числа на дробь
 Fraction operator / (int i, Fraction p)
@@ -395,12 +414,11 @@ Fraction operator / (int i, Fraction p)
 	return(sub);
 }
 
-// Fraction operator / (double, Fraction)
-// {
-// 
-// }
-
-// friend double operator /= (double, Fraction);
+Fraction operator / (double d, Fraction p)
+{
+	Fraction sub(d);
+	return(sub / p);
+}
 
 // метод преобразования в тип double
 // методы сравнения двух дробей
@@ -468,6 +486,38 @@ bool operator != (int i , Fraction p)
 	return(((double)i != (double)p) ? true : false);
 }
 
+long long	fact(int factorial)
+{
+	long long	ll = 1;
+	for (;factorial;factorial--)
+		ll *= factorial;
+	return(ll);
+}
+
+Fraction pow(Fraction p, int pow)
+{
+	Fraction sub = p;
+	for(; pow - 1; pow--)
+		sub *= p;
+	return (sub);
+}
+double	sin(Fraction p)
+{
+	Fraction sub = p;
+	double d = 0;
+	for (int i = 1; i < 6;i++)
+	{
+		long long factor = fact(i * 2 + 1);
+		if (factor < 0)
+			break;
+		if (i % 2 != 0)
+			sub -= (pow(p, i * 2 + 1) / factor);
+		else
+			sub += (pow(p, i * 2 + 1) / factor);
+	}	
+	return((double)sub);
+}
+
 int main(void)
 {
 	Fraction test1, test2, test3,test4;
@@ -475,9 +525,12 @@ int main(void)
 	int i = test1;
 	double d = test1;
 	test2 = test1 / -23;
-	test3 = Fraction(sqrt(2));
-	test4 = Fraction(1.0 / 3);
+	test1 = Fraction(1,-2);
+	d = sin(test1);
+	test3 = Fraction(-sqrt(2));
+	test4 = Fraction(2.0 / 3);
+	test4 = pow(test4, 2);
 	(void)i;
-	(void)d;
+
 	return 0;
 }
