@@ -504,7 +504,6 @@ Fraction pow(Fraction p, int pow)
 double	sin(Fraction p)
 {
 	Fraction sub = p;
-	double d = 0;
 	for (int i = 1; i < 6;i++)
 	{
 		long long factor = fact(i * 2 + 1);
@@ -514,6 +513,22 @@ double	sin(Fraction p)
 			sub -= (pow(p, i * 2 + 1) / factor);
 		else
 			sub += (pow(p, i * 2 + 1) / factor);
+	}	
+	return((double)sub);
+}
+
+double	cos(Fraction p)
+{
+	Fraction sub(1);
+	for (int i = 1; i < 6;i++)
+	{
+		long long factor = fact(i * 2);
+		if (factor < 0)
+			break;
+		if (i % 2 != 0)
+			sub -= (pow(p, i * 2) / factor);
+		else
+			sub += (pow(p, i * 2) / factor);
 	}	
 	return((double)sub);
 }
